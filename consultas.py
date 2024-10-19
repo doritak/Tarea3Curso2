@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+
 
 def cargar_dataset(ruta_dataset: str):
     df = pd.read_csv(ruta_dataset,encoding="latin-1",sep=",")
@@ -39,15 +41,13 @@ def calcular_ingresos_por_pais(dataframe):
     
     for i in range(len(Paises)):
         df_pais = dataframe.loc[dataframe['Country'] == Paises[i]]
+        # print(Paises[i], df_pais, df_pais.shape)
         contador = 0
         suma = 0
         for index in range(df_pais.shape[0]):
             if df_pais.iloc[index]['ConvertedCompYearly']  != "Sin información":
                 contador += 1
                 suma += float(df_pais.iloc[index]['ConvertedCompYearly'])
-
-        # print("VER AQUÍ DATOS POR PAÍS :")
-        # print(Paises[i], df_pais.shape, contador, suma)
         
         if contador != 0: promedio = suma / contador
 
@@ -58,13 +58,27 @@ def calcular_ingresos_por_pais(dataframe):
     for i in range(len(Data_ordenada)):
         Data_ordenada[i][1] = '{:,.0f}'.format(Data_ordenada[i][1]).replace(',','.')
     #transpaso la lista ordenada de tuplas a un data frame con las columnas seleccionadas
-    df_ordenado_paises = pd.DataFrame(Data_ordenada, columns=["País", "Ingreso promedio"])
+    df_ordenado_paises = pd.DataFrame(Data_ordenada, columns=["Pais", "Ingreso promedio"])
     
     return df_ordenado_paises
 
+def calcular_ingresos_por_experiencia(dataframe):
+    pass
+
+def calcular_empleabilidad(dataframe):
+    pass
+
+def graficar_ingresos_paises(dataframe):
+    pass
+    # df_paises = calcular_ingresos_por_pais(dataframe)
+    # df_paises.plot(df_paises, kind="bar", x="Pais", y="Ingreso promedio", title="Ingresos x Países")
+    # plt.show()
 
 if __name__ == "__main__":
     df = cargar_dataset("developers_info.csv")
     df_limpios = limpiar_dataset(df,50)
-    print(calcular_ingresos_por_pais(df_limpios))
-    # print(df.dtypes)
+    df_p = calcular_ingresos_por_pais(df_limpios)
+    # print(df_p) 
+    # graficar_ingresos_paises(df_limpios)
+    # # print(df.dtypes)
+    
