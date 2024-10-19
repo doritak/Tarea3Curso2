@@ -46,8 +46,8 @@ def calcular_ingresos_por_pais(dataframe):
                 contador += 1
                 suma += float(df_pais.iloc[index]['ConvertedCompYearly'])
 
-        print("VER AQUÍ DATOS POR PAÍS :")
-        print(Paises[i], df_pais.shape, contador, suma)
+        # print("VER AQUÍ DATOS POR PAÍS :")
+        # print(Paises[i], df_pais.shape, contador, suma)
         
         if contador != 0: promedio = suma / contador
 
@@ -57,17 +57,14 @@ def calcular_ingresos_por_pais(dataframe):
     #Luego de ordenar la lista, lo formateo a miles "."      
     for i in range(len(Data_ordenada)):
         Data_ordenada[i][1] = '{:,.0f}'.format(Data_ordenada[i][1]).replace(',','.')
-
-    dtP = pd.DataFrame(Data_ordenada, columns=["País", "Ingreso promedio"])
+    #transpaso la lista ordenada de tuplas a un data frame con las columnas seleccionadas
+    df_ordenado_paises = pd.DataFrame(Data_ordenada, columns=["País", "Ingreso promedio"])
     
-    
-
-    print(dtP)
-    # return dtP
+    return df_ordenado_paises
 
 
-
-df = cargar_dataset("developers_info.csv")
-df_limpios = limpiar_dataset(df,50)
-calcular_ingresos_por_pais(df_limpios)
-# print(df.dtypes)
+if __name__ == "__main__":
+    df = cargar_dataset("developers_info.csv")
+    df_limpios = limpiar_dataset(df,50)
+    print(calcular_ingresos_por_pais(df_limpios))
+    # print(df.dtypes)
