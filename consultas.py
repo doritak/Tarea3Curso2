@@ -31,7 +31,7 @@ def limpiar_dataset(dataframe, cantidad_null: int):
           
     for k,v in PorcentajeSinDatos.items():
         if PorcentajeSinDatos[k] > cantidad_null:
-            print(f"Se eliminará la columan {k} por tener {v} valores nulos")
+            print(f"Se eliminará la columna {k} por tener {v} valores nulos") #eliminar este promt de pantalla al eliminar columnas
             del dataframe[k]
     return dataframe    
 
@@ -63,22 +63,20 @@ def calcular_ingresos_por_pais(dataframe):
     return df_ordenado_paises
 
 def calcular_ingresos_por_experiencia(dataframe):
-    pass
+    return dataframe[dataframe['Country']=='Chile']
 
 def calcular_empleabilidad(dataframe):
-    pass
+    return dataframe[dataframe['Country']=='Chile']
 
 def graficar_ingresos_paises(dataframe):
-    pass
-    # df_paises = calcular_ingresos_por_pais(dataframe)
-    # df_paises.plot(df_paises, kind="bar", x="Pais", y="Ingreso promedio", title="Ingresos x Países")
-    # plt.show()
+    dataframe['Ingreso promedio'] = dataframe['Ingreso promedio'].astype('float64')
+    dataframe.plot(kind="bar", x="Pais", y="Ingreso promedio", title="Ingresos x Países")
+    plt.show()
 
 if __name__ == "__main__":
     df = cargar_dataset("developers_info.csv")
     df_limpios = limpiar_dataset(df,50)
-    df_p = calcular_ingresos_por_pais(df_limpios)
-    # print(df_p) 
-    # graficar_ingresos_paises(df_limpios)
-    # # print(df.dtypes)
+    df_p = calcular_ingresos_por_pais(df_limpios) 
+    graficar_ingresos_paises(df_p)
+
     
