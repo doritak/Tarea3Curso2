@@ -16,3 +16,8 @@ Age                         object
 Gender                      object
 Ethnicity                   object
 ConvertedCompYearly        float64
+
+
+YearsCode
+'More than 50 years',
+'Less than 1 year',
