@@ -1,7 +1,6 @@
 import pandas as pd
 from consultas import cargar_dataset, limpiar_dataset, calcular_ingresos_por_pais, calcular_ingresos_por_experiencia, calcular_empleabilidad, graficar_ingresos_paises
 
-# df = cargar_dataset('developers_info.csv')
 
 def cargar_menu():
     print('Para continuar ingrese el número equivalente a la consulta:')
@@ -53,10 +52,14 @@ if __name__== "__main__":
             df_limpio = funcion(df, num_max_null)
         else:
             if 1 in seleccion:  #si ya ingresó la opcion nro. 1 para tener un df_limpio no vacío
-                print(funcion(df_limpio))
+                if numero != 5:
+                    print(funcion(df_limpio))
+                else: # sólo para cuando entres a la opción 5 gráfico, debes tener primero los datos de calcular ingresos por pais
+                    df_p = calcular_ingresos_por_pais(df_limpio)
+                    graficar_ingresos_paises(df_p)
             else:
                 print("Primero debes seleccionar limpiar el Dataframe, para llegar a las otras opciones.")
         numero = validar_ingreso(6)
-
+    print("Gracias por participar!")
 
     

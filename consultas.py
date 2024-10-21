@@ -8,6 +8,7 @@ def cargar_dataset(ruta_dataset: str):
     print(df.head(5))
     return df
 
+
 # eliminar aquellas columnas que posean un porcentaje mayor a cantidad_null% de celdas nulas y luego reemplazar
 # las celdas nulas restantes con el str 'Sin informaci´on'. Finalmente, debes retornar el dataframe limpio.
 def limpiar_dataset(dataframe, cantidad_null: int):
@@ -19,7 +20,7 @@ def limpiar_dataset(dataframe, cantidad_null: int):
     dataframe = dataframe.fillna("Sin información")
     
     for col in range(len(Columna)):
-        print(Columna[col])
+        # print(Columna[col])
         contador = 0
         for index in range(TotalFilas):
             if dataframe.loc[index][Columna[col]]  == "Sin información":
@@ -34,7 +35,9 @@ def limpiar_dataset(dataframe, cantidad_null: int):
         if PorcentajeSinDatos[k] > cantidad_null:
             print(f"Se eliminará la columna {k} por tener {v} valores nulos") #eliminar este promt de pantalla al eliminar columnas
             del dataframe[k]
+            
     return dataframe    
+
 
 def calcular_ingresos_por_pais(dataframe):
     Paises = ["Germany", "Spain", "Chile", "Austria", "United States of America"]
@@ -63,56 +66,95 @@ def calcular_ingresos_por_pais(dataframe):
     
     return df_ordenado_paises
 
+
 def calcular_ingresos_por_experiencia(dataframe):
-    df = dataframe.loc[:, ["YearsCode","YearsCodePro", "ConvertedCompYearly"]]  # realizo un dataframe con tres columnas 
-    # df["Age"] = df["Age"].str.split(" ",expand=True)[0]    
-    df["YearsCode"] = np.where(df["YearsCode"]=="Sin información", "0", df["YearsCode"])
-    df["YearsCode"] = np.where(df["YearsCode"]=="Less than 1 year", "0", df["YearsCode"])
-    df["YearsCode"] = np.where(df["YearsCode"]=="More than 50 years", "51", df["YearsCode"])
+    # realizo un dataframe con tres columnas, que son las que me interesan
+    df = dataframe.loc[:, ["YearsCode","YearsCodePro", "ConvertedCompYearly"]]   
+    # esta es una lista con los datos inválidos dentros del los años de experiencias como junior y senior 
+    datos_invalidos = ["Sin información", "Less than 1 year", "More than 50 years"]
+    # lista del nombre de las columnas: ["YearsCode","YearsCodePro", "ConvertedCompYearly"]
+    nombres_columnas = df.columns.values
 
-    df["YearsCodePro"] = np.where(df["YearsCodePro"]=="Sin información", "0", df["YearsCodePro"])
-    df["YearsCodePro"] = np.where(df["YearsCodePro"]=="Less than 1 year", "0", df["YearsCodePro"])
-    df["YearsCodePro"] = np.where(df["YearsCodePro"]=="More than 50 years", "51", df["YearsCodePro"])
-    
+    #limpio datos invalidos, pq si en el salario anual no tengo información, no puedo sacar ninguna estadística con respecto a este monto
     df.drop(df[df["ConvertedCompYearly"]=="Sin información"].index, inplace=True)
+    #cuando son menores que 1 año y mayores que 50 años, le atribuyo un valor, 0 y 51 respectivamente, porque necesito que sean valores float. 
+    for col in range(len(nombres_columnas)-1):
+        for datos in datos_invalidos:
+            if datos != datos_invalidos[2]:
+                df[nombres_columnas[col]] = np.where(df[nombres_columnas[col]]==datos, "0", df[nombres_columnas[col]])
+            else:
+                df[nombres_columnas[col]] = np.where(df[nombres_columnas[col]]==datos, "51", df[nombres_columnas[col]])
     
-    df["YearsCode"] = df["YearsCode"].astype('float64')
-    df["YearsCodePro"] = df["YearsCodePro"].astype('float64')
-    df["ConvertedCompYearly"] = df["ConvertedCompYearly"].astype('float64')
+    # una vez limpiado y estandarizado los datos numericos, lo puedo pasar a float
+    for col in range(len(nombres_columnas)):
+        df[nombres_columnas[col]] = df[nombres_columnas[col]].astype('float64')
     
-    df.drop(df[df["ConvertedCompYearly"]=="Sin información"].index, inplace=True)
+    # creo una nueva columan con los Total Años que es la suma de los años de junior mas senior(pro)
+    df["Total Años"] = df["YearsCode"] + df["YearsCodePro"]
+    # elimino el total años sumados mayores a 55 años, pq creo que son cotas superiores invalidas ...
+    df.drop(df[df["Total Años"]>55].index, inplace=True)
     
-    df["Años de experiencia"] = df["YearsCode"] + df["YearsCodePro"]
+    #realizo una nueva columna con la función cut() ver pandas.pydata.org, especialmente usada para determinar rango de años, ver doc.
+    df["Rango Edad"] = pd.cut(df["Total Años"], bins=range(0, 60, 5), right=False)
+    #formateo el obtejo category que me entrego, con una función anómima para el intervalo 
+    df["Años de experiencia"] = df["Rango Edad"].apply(lambda x: f"{int(x.left)} - {int(x.right)}")
     
-    df.drop(df[df["Años de experiencia"]>55].index, inplace=True)
-    lista =[]
-    rango = [0,5,10,15,20,25,30,35,40,45,50,55]
-    for i in range(len(rango)-1):
-        df_intervalo_min = df.loc[(df["Años de experiencia"]>=rango[i]) & (df["Años de experiencia"]<rango[i+1])].groupby("Años de experiencia").min()
-        df_intervalo_max = df.loc[(df["Años de experiencia"]>=rango[i]) & (df["Años de experiencia"]<rango[i+1])].groupby("Años de experiencia").max()
-        lista.append([(str(rango[i])+"-"+str(rango[i+1])), df_intervalo_min["ConvertedCompYearly"].min(), df_intervalo_max["ConvertedCompYearly"].max()])
-    
-    df_intervalo = pd.DataFrame(lista, columns=["Años de experiencia","Intervalo inferior (USD/Año)","Intervalo superior (USD/Año)"])
-    
-    df_intervalo["Intervalo inferior (USD/Año)"] = df_intervalo["Intervalo inferior (USD/Año)"].map("{:,.0f}".format)
-    df_intervalo["Intervalo superior (USD/Año)"] = df_intervalo["Intervalo superior (USD/Año)"].map("{:,.0f}".format)
-    
-    # //////////////////////////////////////////
-    #creo un nuevo data frame con el indice de Años de experienciencia y me los agrupa con el valor mínimo y valor máximo
-    # df2 = df.pivot_table(index="Age", values="ConvertedCompYearly", aggfunc={np.min,np.max})
-    # #reseteo el indice para que los años de experiencia me queden como una columna mas
-    # df2.reset_index(inplace=True)
-    # #doy formato a los resultadso de max y min
-    # df2["max"] = df2["max"].map("{:,.0f}".format)
-    # df2["min"] = df2["min"].map("{:,.0f}".format)
-    # df.rename(columns={"Age":"Años de experiencia"}, inplace=True)
-    # df2.rename(columns={"max":"Intervalo superior (USD/Año)","min":"Intervalo inferior (USD/Año)"}, inplace=True)
+    # lo paso a groupby pq sale un Warning, y con esto lo saco .. lo informé x correo, también me sale otro Warning para poner el observed=False
+    df2 = df.groupby("Años de experiencia", observed=False).agg({"ConvertedCompYearly":["min","max"]})
+    # Ahora con la tabla correcta, puedo hacer una tabla dinámica con los años de experiencia y montos de los sueldos, para obtener por grupos de intervalos el max y min
+    #df2 = df.pivot_table(index="Años de experiencia", values="ConvertedCompYearly", observed=False, aggfunc={np.min,np.max})
 
-    print(df_intervalo)
-    return df_intervalo
+    #Asingo el nombre de las columnas
+    df2.columns = ["Intervalo inferior (USD/Año)","Intervalo superior (USD/Año)" ]
+
+    #FORMATEAR A MILES: usé la función map() que es como un for dentro del df, y la función anómima lambda, para realizar un replace()
+    df2["Intervalo inferior (USD/Año)"] = df2["Intervalo inferior (USD/Año)"].map("{:,.0f}".format).apply(lambda x:x.replace(",","."))
+    df2["Intervalo superior (USD/Año)"] = df2["Intervalo superior (USD/Año)"].map("{:,.0f}".format).apply(lambda x:x.replace(",","."))
+
+    # reintegro el índice, para que los Años de experiencia sean la primera columna. 
+    df2.reset_index(inplace=True)
+
+    return df2
+
 
 def calcular_empleabilidad(dataframe):
-    return dataframe[dataframe['Country']=='Chile']
+    # Deberás encontrar el porcentaje de empleabilidad basado en la raza y el género de los desarrolladores. 
+    # columnas a usar Employment, Gender, Ethnicity
+    raza = ["Black or of African descent","Hispanic or Latino/a/x","East Asian","I don't know","Indigenous (such as Native American, Pacific Islander, or Indigenous Australian)","Middle Eastern","White or of European descent"]
+    genero =  ['Man','Non-binary','genderqueer','gender non-conforming','Woman']
+
+    df_i = dataframe.loc[:, ["Ethnicity","Gender", "Employment"]]
+
+    # Filtro mis valores según la lista de raza y género entregada, para construir mi df a trabajar, tuve que realizarlo dentro de un dataframe sino me sale un Warning de copia
+    df = pd.DataFrame(df_i[(df_i["Ethnicity"].isin(raza)) & (df_i["Gender"].isin(genero))])
+
+    # Consulto por los valores únicos de la columna Employment y lo dejo en una lista
+    # Valores_unicos_Employment = dataframe["Employment"].unique().tolist()
+    # print(Valores_unicos_Employment)
+    
+    # le asigno un peso a cada opción de empleabilidad, si es full-time es 1, para sumar, .. trate de usar contar, y no me dejo? el ny.count
+    df.loc[df["Employment"]=="Employed full-time", "Employment"] = 1
+    df.loc[df["Employment"]=="Employed part-time", "Employment"] = 0.5
+    df.loc[df["Employment"]=="Not employed, but looking for work", "Employment"] = 0
+    
+    # Agrupo por Ethnicity y Gender y cuento las ocurrencias del Employment según su peso mensionado arriba, use groupby, me da el mismo resultado con el otro indicado abajo
+    df_EM = df.groupby(["Ethnicity", "Gender"]).agg({"Employment":"sum"})
+    
+    # realizo una tabla dinámica con col: raza y genero y los valores de Empleabilidad para que se sumen , 
+    # ----- esto que está comentado, es una forma alternativa, pero me da un warning ---- dice que ahora ocupe el DataFrameGroupBy.sum
+    #df_EM = df.pivot_table(index=["Ethnicity", "Gender"],values="Employment", aggfunc=np.sum)
+     
+    # ahora calculo el porcentaje pero a la suma de filas en total del df_i, pq quiero su comparación real al total de la muestra
+    df_EM["Employment"] = df_EM["Employment"]/df_i.shape[0]*100
+    
+    #formateo a % 
+    df_EM["Employment"] = df_EM["Employment"].map("{:.2f}%".format).apply(lambda x:x.replace(",","."))
+    
+    # pongos los index original, para dejarlo como título
+    df_EM.reset_index(inplace=True)
+
+    return df_EM
+
 
 def graficar_ingresos_paises(dataframe):
     dataframe['Ingreso promedio'] = dataframe['Ingreso promedio'].astype('float64')
@@ -122,10 +164,16 @@ def graficar_ingresos_paises(dataframe):
 if __name__ == "__main__":
     df = cargar_dataset("developers_info.csv")
     df_limpios = limpiar_dataset(df,50)
-    # df_p = calcular_ingresos_por_pais(df_limpios)
+    df_p = calcular_ingresos_por_pais(df_limpios)
     df_i = calcular_ingresos_por_experiencia(df_limpios)
-    print(df_i.dtypes) 
+    df_e = calcular_empleabilidad(df_limpios)
+    print(df_p)
+    print() 
+    print(df_i)
+    print()
+    print(df_e)
+    print() 
+    graficar_ingresos_paises(df_p)
 
-    # graficar_ingresos_paises(df_p)
 
     
