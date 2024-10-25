@@ -21,3 +21,14 @@ ConvertedCompYearly        float64
 YearsCode
 'More than 50 years',
 'Less than 1 year',
+# NO se pueden eliminar estas columnas, pq la vamos a necesitar para las otras selecciones. 
+col_no_eliminar = [
+"Employment",
+"Country",
+"YearsCode",
+"YearsCodePro",
+"Gender",
+"Ethnicity",
+"ConvertedCompYearly"]
+
+col_no_eliminar = ["Employment","Country","YearsCode","YearsCodePro","Gender","Ethnicity","ConvertedCompYearly"]
