@@ -12,14 +12,14 @@ Esta tarea se divide en dos partes: La primera parte consiste en completar funci
 - [x] **def calcular_ingresos_por_pais(dataframe: df) -> df:** Esta función recibe como argumento el dataframe retornado por la función `limpiar_dataset`. Debes calcular el ingreso promedio de 5 países a tu elección y retornar este **nuevo dataframe** ordenado por ingreso promedio de mayor a menor.<br>
   <img width="203" alt="ingreso_por_pais" src="https://github.com/user-attachments/assets/efa0df6d-80c9-4af6-b9be-12cba676a388">
 
-- [ ] **def calcular_ingresos_por_experiencia(dataframe: df) -> df:** Esta función recibe como argumento el dataframe retornado por la función `limpiar_dataset`. Debes calcular el rango de ingresos que poseen los desarrolladores que tienen un rango de años de experiencia. Para esto, el dataframe debe contener **3 columnas**:
+- [x] **def calcular_ingresos_por_experiencia(dataframe: df) -> df:** Esta función recibe como argumento el dataframe retornado por la función `limpiar_dataset`. Debes calcular el rango de ingresos que poseen los desarrolladores que tienen un rango de años de experiencia. Para esto, el dataframe debe contener **3 columnas**:
   - Años de experiencia: Esta columna debe indicar el rango de años de experiencia de los desarrolladores, los cuales deben ir en intervalos de 5 años, es decir, 0-5, 5-10, 10-15, etc. Para cada rango se debe considerar el **limite inferior** del intervalo, pero no el límite superior, es decir, el intervalo de 0-5 considera a los desarrolladores que tienen 0, 1, 2, 3 y 4 años de experiencia.
   - Ingreso menor: Corresponde al menor ingreso que poseen los desarrolladores que se encuentran en cada rango.
   - Ingreso mayor: Corresponde al mayor ingreso que poseen los desarrolladores que se encuentranen cada rango.<br>
   Finalmente, debes retornar el dataframe generado.
   <img width="534" alt="igreso_years_experience" src="https://github.com/user-attachments/assets/b74ceeae-8fd2-42e6-bbdf-7dd4a7718451">
 
-- [ ] **def calcular_empleabilidad(dataframe: df) -> df:** Esta función recibe como argumento el dataframe retornado por la función `limpiar_dataset`. Deberás encontrar el **porcentaje de empleabilidad** basado en la raza y el género de los desarrolladores. Para esto, debes considerar todas las combinaciones posibles de raza y género existentes en el dataset, es decir, todos los posibles pares (raza, genero) sin repeticciones. Debes asegurarte de manejar posibles errores o entradas inesperadas de manera adecuada. Para facilitar considere solamente las siguentes razas/generos:
+- [x] **def calcular_empleabilidad(dataframe: df) -> df:** Esta función recibe como argumento el dataframe retornado por la función `limpiar_dataset`. Deberás encontrar el **porcentaje de empleabilidad** basado en la raza y el género de los desarrolladores. Para esto, debes considerar todas las combinaciones posibles de raza y género existentes en el dataset, es decir, todos los posibles pares (raza, genero) sin repeticciones. Debes asegurarte de manejar posibles errores o entradas inesperadas de manera adecuada. Para facilitar considere solamente las siguentes razas/generos:
 ```
   [
     "Black or of African descent",
