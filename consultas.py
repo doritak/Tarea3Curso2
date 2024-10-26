@@ -1,7 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-
+# Tarea entregada el 25 de octubre 2024
+# Dora Novoa
 
 def cargar_dataset(ruta_dataset: str):
     df = pd.read_csv(ruta_dataset,encoding="latin-1",sep=",")
@@ -93,8 +94,9 @@ def calcular_ingresos_por_experiencia(dataframe):
 def calcular_empleabilidad(dataframe):
     # Deberás encontrar el porcentaje de empleabilidad basado en la raza y el género de los desarrolladores. 
     # columnas a usar Employment, Gender, Ethnicity
-    raza = ["Black or of African descent","Hispanic or Latino/a/x","East Asian","I don't know","Indigenous (such as Native American, Pacific Islander, or Indigenous Australian)","Middle Eastern","White or of European descent"]
-    genero =  ['Man','Non-binary','genderqueer','gender non-conforming','Woman']
+    # la raza y genero lo puse en un set, luego para ser filtrado abajo.
+    raza = {"Black or of African descent","Hispanic or Latino/a/x","East Asian","I don't know","Indigenous (such as Native American, Pacific Islander, or Indigenous Australian)","Middle Eastern","White or of European descent"}
+    genero =  {'Man','Non-binary','genderqueer','gender non-conforming','Woman'}
     # realizo un dataframe con tres columnas, que son las que me interesan
     df_i = dataframe.loc[:, ["Ethnicity","Gender", "Employment"]]
 
@@ -138,6 +140,7 @@ def graficar_ingresos_paises(dataframe):
 
 
 if __name__ == "__main__":
+    
     df = cargar_dataset("developers_info.csv")
     df_limpios = limpiar_dataset(df,60)
     

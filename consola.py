@@ -29,7 +29,7 @@ def validar_ingreso(cota_superior: int):
         else:
             return num
         
-        
+#funcion de impresion de nombre de la funcion seleccionada        
 def imprimir_nombre_funcion(titulo):
     print("\033[35m"+"="*20+f" Selección {titulo} "+"="*20+"\033[39m")
     
@@ -73,7 +73,7 @@ if __name__== "__main__":
         if cont >0: 
             print("\033[35m"+f"Hasta ahora haz seleccionado estas opciones {' - '.join(list(seleccion.values()))}"+"\033[39m")  # uso el join y por eso lo tengo que pasar a list pero de sólo los nombres de las funciones
         numero = validar_ingreso(6)
-    print("Gracias por participar!")
+    print("\033[35m"+"Gracias por participar!"+"\033[39m")
     
 
     
